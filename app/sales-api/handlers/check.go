@@ -24,6 +24,5 @@ func (c check) readiness(ctx context.Context, w http.ResponseWriter, r *http.Req
 	}{
 		Status: "Ok",
 	}
-
 	return web.Respond(ctx, w, status, http.StatusOK)
 }

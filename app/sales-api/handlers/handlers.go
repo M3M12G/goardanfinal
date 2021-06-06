@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/m3m12g/goardanfinal/business/mid"
 	"log"
 	"net/http"
 	"os"
@@ -10,7 +11,7 @@ import (
 
 // API constructs an http.Handler with all application routes defined.
 func API(build string, shutdown chan os.Signal, log *log.Logger) *web.App {
-	app := web.NewApp(shutdown)
+	app := web.NewApp(shutdown, mid.Logger(log))
 
 	check := check{logger: log}
 

@@ -44,6 +44,12 @@ func NewApp(shutdown chan os.Signal, mw ...Middleware) *App {
 	return &app
 }
 
+// SignalShutdown is used to gracefully shutdown the app when an integrity
+// issue is identified.
+func (a *App) SignalShutdown() {
+	a.shutdown <- syscall.SIGTERM
+}
+
 func (a *App) Handle(method string, path string, handler Handler, mw ...Middleware) {
 
 	// First wrap handler specific middleware around this handler.
@@ -73,10 +79,4 @@ func (a *App) Handle(method string, path string, handler Handler, mw ...Middlewa
 	}
 
 	a.ContextMux.Handle(method, path, h)
-}
-
-// SignalShutdown is used to gracefully shutdown the app when an integrity
-// issue is identified.
-func (a *App) SignalShutdown() {
-	a.shutdown <- syscall.SIGTERM
 }
