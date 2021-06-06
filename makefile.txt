@@ -19,3 +19,8 @@ gomod tidy
 test
     go test -v ./...
     staticcheck ./...
+
+
+curl
+    curl http://localhost:3000/readiness
+    curl -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/readiness
