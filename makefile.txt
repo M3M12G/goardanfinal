@@ -1,0 +1,21 @@
+go run
+    go run ./app/sales-api/
+go runadmin
+    go run ./app/sales-admin/
+
+expvarmon
+    expvarmon -ports=":4000" -vars="build,requests,goroutines,errors,mem:memstats.Alloc"
+
+# // To generate a private/public key PEM file.
+# openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
+# openssl rsa -pubout -in private.pem -out public.pem
+# ./sales-admin genkey
+
+
+gomod tidy
+    go mod tidy
+    go mod vendor
+
+test
+    go test -v ./...
+    staticcheck ./...

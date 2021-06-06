@@ -19,7 +19,7 @@ func main() {
 }
 
 func tokengen() {
-	privatePEM, err := ioutil.ReadFile("C:\\Users\\Rakhat\\go\\src\\goardanfinal\\private.pem")
+	privatePEM, err := ioutil.ReadFile("C:\\Users\\Magauiya\\go\\src\\goardanfinal\\private.pem")
 	if err != nil {
 		log.Fatalln(err)
 	}
