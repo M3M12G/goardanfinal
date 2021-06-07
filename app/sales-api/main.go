@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/m3m12g/goardanfinal/business/auth"
+	"github.com/m3m12g/goardanfinal/foundation/database"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -49,6 +50,13 @@ func run(log *log.Logger) error {
 			KeyID          string `conf:"default:54bb2165-71e1-41a6-af3e-7da4a0e1e2c1"`
 			PrivateKeyFile string `conf:"default:private.pem"`
 			Algoritm       string `conf:"default:RS256"`
+		}
+		DB struct {
+			User       string `conf:"default:postgres"`
+			Password   string `conf:"default:limara2015,noprint"`
+			Host       string `conf:"default:db"`
+			Name       string `conf:"default:postgres"`
+			DisableTLS bool   `conf:"default:true"`
 		}
 	}
 	cfg.Version.SVN = build
@@ -115,6 +123,23 @@ func run(log *log.Logger) error {
 		return errors.Wrap(err, "constructing auth")
 	}
 
+	log.Println("main: Initializing database support")
+
+	db, err := database.Open(database.Config{
+		User:       cfg.DB.User,
+		Password:   cfg.DB.Password,
+		Host:       cfg.DB.Host,
+		Name:       cfg.DB.Name,
+		DisableTLS: cfg.DB.DisableTLS,
+	})
+	if err != nil {
+		return errors.Wrap(err, "connecting to db")
+	}
+	defer func() {
+		log.Printf("main: Database Stopping : %s", cfg.DB.Host)
+		db.Close()
+	}()
+
 	// =========================================================================
 	// Start Debug Service
 	//
@@ -144,7 +169,7 @@ func run(log *log.Logger) error {
 
 	api := http.Server{
 		Addr:         cfg.Web.APIHost,
-		Handler:      handlers.API(build, shutdown, log, auth),
+		Handler:      handlers.API(build, shutdown, log, auth, db),
 		ReadTimeout:  cfg.Web.ReadTimeout,
 		WriteTimeout: cfg.Web.WriteTimeout,
 	}

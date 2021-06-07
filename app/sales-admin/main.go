@@ -1,3 +1,4 @@
+// This program performs administrative tasks for the garage sale service.
 package main
 
 import (
@@ -7,6 +8,8 @@ import (
 	"encoding/pem"
 	"fmt"
 	"github.com/dgrijalva/jwt-go/v4"
+	"github.com/m3m12g/goardanfinal/business/data/schema"
+	"github.com/m3m12g/goardanfinal/foundation/database"
 	"io/ioutil"
 	"log"
 	"os"
@@ -15,11 +18,31 @@ import (
 
 func main() {
 	//keygen()
-	tokengen()
+	//tokengen()
+	migrate()
+}
+
+func migrate() {
+	dbConfig := database.Config{
+		User:       "postgres",
+		Password:   "limara2015",
+		Host:       "0.0.0.0",
+		Name:       "postgres",
+		DisableTLS: true,
+	}
+	db, err := database.Open(dbConfig)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer db.Close()
+	if err := schema.Migrate(db); err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println("migrations complete")
 }
 
 func tokengen() {
-	privatePEM, err := ioutil.ReadFile("C:\\Users\\Magauiya\\go\\src\\goardanfinal\\private.pem")
+	privatePEM, err := ioutil.ReadFile("C:\\Users\\Rakhat\\go\\src\\goardanfinal\\private.pem")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -55,7 +78,7 @@ func tokengen() {
 
 	method := jwt.GetSigningMethod("RS256")
 	tkn := jwt.NewWithClaims(method, claims)
-	tkn.Header["kid"] = "sadasfsaf-132456-safasf"
+	tkn.Header["kid"] = "54bb2165-71e1-41a6-af3e-7da4a0e1e2c1"
 	str, err := tkn.SignedString(privateKey)
 	if err != nil {
 		log.Fatalln(err)
